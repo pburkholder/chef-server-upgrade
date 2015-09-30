@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'cs113::default' do
+describe 'chef_server_upgrade::default' do
   # Serverspec examples can be found at
   # http://serverspec.org/resource_types.html
   it 'does something' do

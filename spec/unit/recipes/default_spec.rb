@@ -6,7 +6,7 @@
 
 require 'spec_helper'
 
-describe 'cs113::default' do
+describe 'chef_server_upgrade::default' do
   context 'When all attributes are default, on an unspecified platform' do
     let(:chef_run) do
       runner = ChefSpec::ServerRunner.new

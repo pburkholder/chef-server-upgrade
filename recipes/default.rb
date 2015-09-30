@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: cs113
+# Cookbook Name:: chef_server_upgrade
 # Recipe:: default
 #
 # Copyright (c) 2015 The Authors, All Rights Reserved.
