@@ -1,0 +1,7 @@
+name 'cs113'
+maintainer 'The Authors'
+maintainer_email 'you@example.com'
+license 'all_rights'
+description 'Installs/Configures cs113'
+long_description 'Installs/Configures cs113'
+version '0.2.0'
