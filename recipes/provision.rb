@@ -11,7 +11,6 @@ with_driver 'aws::us-east-1' do
   aws_security_group provision_name do
     description name
     inbound_rules '108.56.240.213/32' => 22
-    inbound_rules '108.56.240.213/32' => 22
   end
 
   with_machine_options(
