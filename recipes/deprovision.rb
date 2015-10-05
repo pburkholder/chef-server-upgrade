@@ -12,8 +12,8 @@ with_driver 'aws::us-east-1' do
       action :destroy
     end
   end
-  aws_security_group provision_name do
-    description name
-    action :destroy
-  end
+  #aws_security_group provision_name do
+  #  description name
+  #  action :destroy
+  #end
 end

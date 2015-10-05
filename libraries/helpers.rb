@@ -6,9 +6,7 @@
 def cidr_block(locale)
   case locale
   when 'home'
-    '71.178.175.140/32'
-  when 'excella'
-    '50.241.130.54/32'
+    node[:chef_server_upgrade][:homeip]
   else
     '0.0.0.0/0'
   end
@@ -20,7 +18,8 @@ def org
 end
 
 def chef_server_url
-  "https://cs_prod.cheffian.com/organizations/#{org}"
+  api_fqdn = node[:chef_server_upgrade][:api_fqdn]
+  "https://#{api_fqdn}/organizations/#{org}"
 end
 
 def validation_client_name
@@ -32,16 +31,15 @@ def validation_pem
 end
 
 def server_cert
-  File.read("#{ENV['HOME']}/.chef/trusted_certs/chefserver_cheffian_com.crt")
+  File.read("#{ENV['HOME']}/.chef/trusted_certs/cs-prod_cheffian_com.crt")
 end
-
 
 def user_data
 <<END_SCRIPT
 #!/bin/bash -xv
 
 # Install chef-client
-curl -L https://www.opscode.com/chef/install.sh | bash /dev/stdin -v 12.3.0
+curl -L https://www.opscode.com/chef/install.sh | bash /dev/stdin -v 12.4.1
 
 # Give Ohai a hint about EC2
 mkdir -p /etc/chef/ohai/hints
