@@ -1,10 +1,7 @@
 
-# Assume: cs-prod.pburkholder.com chefserver-prod,
-# and cs-test.pburkholder.com for the test machine
-
 remote_file 'private-chef.rpm' do
   path '/root/private-chef.rpm'
-  source 'https://web-dl.packagecloud.io/chef/stable/packages/el/6/private-chef-#{version}-1.el6.x86_64.rpm'
+  source 'https://web-dl.packagecloud.io/chef/stable/packages/el/6/private-chef-11.3.2-1.el6.x86_64.rpm'
   checksum '6766b26039ace2c4749b870cb0d7840c1546da0470840f75e41ff587fce6a8de'
 end
 
@@ -51,7 +48,16 @@ execute 'create_prod_org' do
   action :run
 end
 
-commands = <<-END
-knife opc user create superadmin Peter Burkholder pburkholder@chef.io NotTooLate2bSecure > superadmin.pem
-knife opc org user add prod superadmin
-END
+execute 'create_superadmin_user' do
+  creates '/root/superadmin.pem'
+  command(
+   'knife opc user create superadmin Peter Burkholder pburkholder@chef.io NotTooLate2bSecure > superadmin.pem'
+  )
+  action :run
+  notifies :run, 'execute[add_superadmin_to_prod]', :delayed
+end
+
+execute 'add_superadmin_to_prod' do
+  action :nothing
+  command 'knife opc org user add prod superadmin'
+end
