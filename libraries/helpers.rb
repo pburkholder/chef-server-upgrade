@@ -39,7 +39,7 @@ def user_data
 #!/bin/bash -xv
 
 # Install chef-client
-curl -L https://www.opscode.com/chef/install.sh | bash /dev/stdin -v 12.4.1
+curl -L https://www.opscode.com/chef/install.sh | bash /dev/stdin -v 11.18.14
 
 # Give Ohai a hint about EC2
 mkdir -p /etc/chef/ohai/hints

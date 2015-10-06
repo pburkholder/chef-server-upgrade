@@ -31,9 +31,9 @@ with_driver 'aws::us-east-1' do
   end
 
   aws_auto_scaling_group role_org do
-    desired_capacity 1
-    min_size 1
-    max_size 2
+    desired_capacity 8
+    min_size 0
+    max_size 10
     launch_configuration role_org
     availability_zones ['us-east-1c']
   end

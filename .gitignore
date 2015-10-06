@@ -17,3 +17,8 @@ bin/*
 
 *.pem
 .client.rb
+
+syntaxcache/
+roles/
+nodes/
+clients/

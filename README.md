@@ -20,9 +20,10 @@ private-chef-ctl stop
 /bin/rm -f /etc/opscode/chef-server.rb #  (settings will be copied from private-chef.rb)
 ```
 
-## Make the clone
+## Make the backups
 
 ```
+# Backup just the data and configs:
 chefbackup='/var/chefbackup.tar'
 for i in \
   "`find /var/opt/opscode -name "data" && find /var/opt/opscode/rabbitmq -name "db"`"; do
@@ -31,13 +32,16 @@ done
 
 tar --append -pvf $chefbackup /etc/opscode --exclude /etc/opscode/chef-server-running.json
 bzip2 $chefbackup
+
+# Backup everything -- we shouldn't need it, but just in case
+tar -czpf /var/chefall.tgz /var/opt/opscode /etc/opscode
 ```
 
-## Verify the clone
+## Verify the backup
 
 ```
-ls -lh $chefbackup.bz2
-bzip2 -d -c $chefbackup.bz2 | tar -tf -
+ls -lh $chefbackup.bz2 # should be 8M at a min
+bzip2 -d -c $chefbackup.bz2 | tar -tf -   # should see lots of files
 ```
 
 ## Get the RPM onto the box for the current version and the next version
@@ -78,6 +82,39 @@ knife node list
 knife node search '*:*'
 knife cookbook upload ...
 ```
+
+## Rollback
+
+```
+chef-server-ctl stop
+rpm --erase chef-server-core
+rpm -Uvh --nopostun /root/private-chef.rpm
+```
+
+### Cleanup the database files
+
+```
+RM='/bin/rm -rf'
+for i in \
+  "`find /var/opt/opscode -name "data" && find /var/opt/opscode/rabbitmq -name "db"`"; do
+    $RM $i;
+    $RM /etc/opscode
+done
+```
+
+### Restore databases and test
+
+```
+bzip2 -d -c $chefbackup.bz2 | tar -C / -xvf -
+private-chef-ctl reconfigure
+private-chef-ctl start
+private-chef-ctl test
+```
+
+### Also the tests above for the upgrade
+
+## Done with upgrade/rollback
+
 
 # Set up for the upgrade test:
 
