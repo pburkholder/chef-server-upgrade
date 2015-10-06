@@ -1,4 +1,85 @@
-# chef-server-upgrade
+# chef-server-upgrade -- All commands are 'root'
+
+## References
+
+https://getchef.zendesk.com/hc/en-us/articles/204223664-How-Can-I-Clone-A-Chef-Server-System-For-Testing-Patches-or-Upgrades-
+
+https://docs.chef.io/upgrade_server.html
+
+## Validate your current install passes tests
+
+```
+private-chef-ctl test
+```
+
+## Stop things in sane state
+
+```
+private-chef-ctl reconfigure
+private-chef-ctl stop
+/bin/rm -f /etc/opscode/chef-server.rb #  (settings will be copied from private-chef.rb)
+```
+
+## Make the clone
+
+```
+chefbackup='/var/chefbackup.tar'
+for i in \
+  "`find /var/opt/opscode -name "data" && find /var/opt/opscode/rabbitmq -name "db"`"; do
+    tar -cvpf $chefbackup $i;
+done
+
+tar --append -pvf $chefbackup /etc/opscode --exclude /etc/opscode/chef-server-running.json
+bzip2 $chefbackup
+```
+
+## Verify the clone
+
+```
+ls -lh $chefbackup.bz2
+bzip2 -d -c $chefbackup.bz2 | tar -tf -
+```
+
+## Get the RPM onto the box for the current version and the next version
+
+```
+curl -L \
+  https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.2.0-1.el6.x86_64.rpm \
+  -o /root/chef-server.rpm -vs
+curl -L \
+  https://web-dl.packagecloud.io/chef/stable/packages/el/6/private-chef-11.3.2-1.el6.x86_64.rpm \
+  -o /root/private-chef.rpm -vs
+```
+
+## Do the upgrade
+
+```
+rpm -Uvh --nopostun /root/chef-server.rpm
+chef-server-ctl upgrade  # go get coffee
+chef-server-ctl start
+```
+
+## Test
+
+###  On chef-server machine
+
+```
+chef-server-ctl test
+```
+
+### on clients
+
+`chef-client`
+
+### on workstation
+
+```
+knife node list
+knife node search '*:*'
+knife cookbook upload ...
+```
+
+# Set up for the upgrade test:
 
 1. Provision the chef-server with `chef-client -z recipes\provision.rb -c .client.rb`
 
