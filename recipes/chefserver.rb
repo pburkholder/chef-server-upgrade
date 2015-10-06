@@ -15,12 +15,13 @@ directory '/etc/opscode' do
   mode '0755'
 end
 
-the_api_fqdn = node[:chef_server_upgrade][:api_fqdn]
+# the_api_fqdn = node[:chef_server_upgrade][:api_fqdn]
+the_api_fqdn = 'cs-prod.cheffian.com'
 
-file '/etc/opscode/chef-server.rb' do
-  content "api_fqdn #{the_api_fqdn}\n"
+file '/etc/opscode/private-chef.rb' do
+  content "api_fqdn \'#{the_api_fqdn}\'\n"
   mode '0644'
-  notifies :run, 'execute[pc-reconfigure]', :delayed
+  notifies :run, 'execute[pc-reconfigure]', :immediately
 end
 
 execute 'pc-reconfigure' do
@@ -50,14 +51,14 @@ end
 
 execute 'create_prod_org' do
   creates '/root/prod.pem'
-  command 'knife -c /root/knife.rb opc org create prod prod > /root/prod.pem'
+  command 'knife  opc org create prod prod -c /root/knife.rb > /root/prod.pem'
   action :run
 end
 
 execute 'create_superadmin_user' do
   creates '/root/superadmin.pem'
   command(
-   'knife -c /root/knife.rb opc user create superadmin Peter Burkholder pburkholder@chef.io NotTooLate2bSecure > superadmin.pem'
+    'knife opc user create superadmin Peter Burkholder pburkholder@chef.io NotTooLate2bSecure -c /root/knife.rb > superadmin.pem'
   )
   action :run
   notifies :run, 'execute[add_superadmin_to_prod]', :delayed
@@ -65,5 +66,5 @@ end
 
 execute 'add_superadmin_to_prod' do
   action :nothing
-  command 'knife -c /root/knife.rb opc org user add prod superadmin'
+  command 'knife opc org user add prod superadmin -c /root/knife.rb'
 end

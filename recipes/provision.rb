@@ -14,8 +14,9 @@ with_driver 'aws::us-east-1' do
   aws_security_group provision_name do
     description name
     inbound_rules([
-      { port: 22,  :protocol => :tcp, sources: [inbound_ip] },
-      { port: 443, :protocol => :tcp, sources: [inbound_ip] }
+      { port: 22, protocol: :tcp, sources: [inbound_ip] },
+      { port: 443, protocol: :tcp, sources: ['172.31.0.0/16'] },
+      { port: 443, protocol: :tcp, sources: [inbound_ip] }
     ])
   end
 

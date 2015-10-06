@@ -1,5 +1,4 @@
-#
-# Cookbook Name:: chef_server_upgrade
+# chef_server_upgrade
 # Recipe:: csutest-prod
 #
 # Create test nodes that associate to the 'prod' org on
@@ -14,21 +13,21 @@ org  = 'prod'
 role_org = role + '-' + org
 
 with_driver 'aws::us-east-1' do
-  aws_security_group  role_org  do
-    description     name
-    inbound_rules   node[:chef_server_upgrade][:homeip] => 22
+  aws_security_group role_org do
+    description name
+    inbound_rules node[:chef_server_upgrade][:homeip] => 22
   end
 
   aws_launch_configuration role_org do
-    image 'ami-d85e75b0'  # Trusty
+    image 'ami-d85e75b0' # Trusty
     instance_type 'm1.small'
-    options({
-      security_groups: [ role_org ],
-#      iam_instance_profile: 'pburkholder-ec2-bootstrap',
-#      iam_instance_profile: 'cheffian-ec2-bootstrap',
+    options(
+      security_groups: [role_org],
+      # iam_instance_profile: 'pburkholder-ec2-bootstrap',
+      # iam_instance_profile: 'cheffian-ec2-bootstrap',
       key_pair: 'pburkholder-one',
       user_data: user_data
-    })
+    )
   end
 
   aws_auto_scaling_group role_org do
