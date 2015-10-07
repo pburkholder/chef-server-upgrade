@@ -83,6 +83,14 @@ knife node search '*:*'
 knife cookbook upload ...
 ```
 
+### If keeping chef-server-12:
+
+After the upgrade process is complete and everything is tested and verified to be working properly, clean up the server by removing all of the old data:
+
+```
+chef-server-ctl cleanup
+```
+
 ## Rollback
 
 ```
@@ -118,7 +126,8 @@ private-chef-ctl test
 
 # Set up for the upgrade test:
 
-1. Provision the chef-server with `chef-client -z recipes\provision.rb -c .client.rb`
+1. Provision the chef-server with `chef-client -z recipes\provision.rb`
+
 
 That in turn runs `recipes\chefserver.rb` to set up the 11.3.2 chef server
 
@@ -135,12 +144,14 @@ $env:CHEF_SERVER = 'prod'
 knife ssl fetch https://cs-prod.cheffian.com
 scp root@cs-prod.cheffian.com:prod.pem $home/.chef/prod.pem
 scp root@cs-prod.cheffian.com:superadmin.pem $home/.chef/superadmin.pem
+# and test
+knife node list -c .client.rb
 ```
 
 Add the role for our csutest Role
 
 ```
-knife role from file roles/csutest-prod.json
+knife role from file roles/csutest-prod.json -c .client.rb
 ```
 
 4. Spin up an ASG

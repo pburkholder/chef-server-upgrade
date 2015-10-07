@@ -9,13 +9,14 @@ require_relative '../libraries/helpers'
 
 role = 'csutest'
 org  = 'prod'
+inbound_ip     = '108.56.0.0/16'
 
 role_org = role + '-' + org
 
 with_driver 'aws::us-east-1' do
   aws_security_group role_org do
     description name
-    inbound_rules node[:chef_server_upgrade][:homeip] => 22
+    inbound_rules inbound_ip => 22
   end
 
   aws_launch_configuration role_org do

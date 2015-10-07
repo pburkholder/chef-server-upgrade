@@ -18,7 +18,7 @@ def org
 end
 
 def chef_server_url
-  api_fqdn = node[:chef_server_upgrade][:api_fqdn]
+  api_fqdn = 'cs-prod.cheffian.com'
   "https://#{api_fqdn}/organizations/#{org}"
 end
 
@@ -39,7 +39,7 @@ def user_data
 #!/bin/bash -xv
 
 # Install chef-client
-curl -L https://www.opscode.com/chef/install.sh | bash /dev/stdin -v 11.18.14
+curl -L https://www.opscode.com/chef/install.sh | bash /dev/stdin -v 11.18.12
 
 # Give Ohai a hint about EC2
 mkdir -p /etc/chef/ohai/hints

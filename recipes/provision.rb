@@ -7,7 +7,7 @@ require 'chef/provisioning/aws_driver'
 
 provision_name = 'chef_server_upgrade'
 inbound_ip     = '108.56.0.0/16'
-image_id       = 'ami-bc8131d4'
+image_id       = 'ami-c2a818aa' # hvm
 key_name       = 'pburkholder-one'
 
 with_driver 'aws::us-east-1' do
@@ -25,7 +25,7 @@ with_driver 'aws::us-east-1' do
   with_machine_options(
     ssh_username: 'root',
     bootstrap_options: {
-      instance_type: 'm1.small',
+      instance_type: 'm4.xlarge',
       image_id: image_id,
       security_group_ids: [provision_name],
       key_name: key_name
@@ -35,7 +35,7 @@ with_driver 'aws::us-east-1' do
   %w(cs-prod).each do |cs_machine|
     machine cs_machine do
       action :converge
-      recipe 'chef_server_upgrade::chefserver'
+#      recipe 'chef_server_upgrade::chefserver'
     end
   end
 end
